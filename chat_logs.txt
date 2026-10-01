@@ -1,0 +1,10 @@
+USER: hi
+AI: Hello! How can I assist you today?
+--------------------------------------------------------------------------------
+USER: tell me about Alex Chen
+AI: Alex Chen is a Backend Software Engineer at Insurellm, based in San Francisco, California. He was born on March 15, 1990. Alex joined Insurellm in April 2020 as a Junior Backend Developer and was promoted to Backend Software Engineer in October 2021. In March 2023, he was awarded the title of Senior Backend Software Engineer.
+
+Throughout his career at Insurellm, Alex has contributed significantly to backend development, including building APIs, leading infrastructure projects, and optimizing system performance. His current salary is $115,000, and he has a history of excellent performance and contributions to the company's projects.
+
+He actively participates in Diversity & Inclusion initiatives and has completed certifications in cloud architecture and DevOps. He plans to pursue further professional development in AI and machine learning.
+--------------------------------------------------------------------------------

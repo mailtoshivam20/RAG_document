@@ -13,6 +13,17 @@ openai = OpenAI()
 
 knowledge = {}
 
+LOG_FILE = "chat_logs.txt"
+
+
+def save_log(user_input, ai_output):
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"USER: {user_input}\n")
+        f.write(f"AI: {ai_output}\n")
+        f.write("-" * 80 + "\n")
+
+
+
 # Load employee documents
 filenames = glob.glob(
     r"D:\Shivam\Project\knowledge-base\employees\*"
@@ -99,7 +110,11 @@ def chat(message, history):
         messages=messages
     )
 
-    return response.choices[0].message.content
+    output = response.choices[0].message.content
+
+    save_log(message, output)
+
+    return output
 
 
 gr.ChatInterface(chat).launch(inbrowser=True)
