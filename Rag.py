@@ -1,5 +1,7 @@
 import os
 import glob
+import traceback
+from datetime import datetime
 from dotenv import load_dotenv
 from pathlib import Path
 import gradio as gr
@@ -7,19 +9,28 @@ from openai import OpenAI
 
 load_dotenv(override=True)
 
-MODEL = "gpt-4.1-nano"
+MODEL = "gpt-5.4-nano"
 
 openai = OpenAI()
 
 knowledge = {}
 
 LOG_FILE = "chat_logs.txt"
+ERROR_LOG_FILE = "error_logs.txt"
 
 
 def save_log(user_input, ai_output):
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"USER: {user_input}\n")
         f.write(f"AI: {ai_output}\n")
+        f.write("-" * 80 + "\n")
+
+
+def save_error(user_input):
+    with open(ERROR_LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"TIME: {datetime.now():%Y-%m-%d %H:%M:%S}\n")
+        f.write(f"USER: {user_input}\n")
+        f.write(traceback.format_exc())
         f.write("-" * 80 + "\n")
 
 
@@ -88,33 +99,39 @@ def additional_context(message):
 
 def chat(message, history):
 
-    context = additional_context(message)
+    try:
 
-    print("\nUSER:", message)
-    print("\nRETRIEVED CONTEXT:")
-    print(context)
+        context = additional_context(message)
 
-    system_message = SYSTEM_PREFIX + context
+        print("\nUSER:", message)
+        print("\nRETRIEVED CONTEXT:")
+        print(context)
 
-    messages = [
-        {"role": "system", "content": system_message}
-    ]
+        system_message = SYSTEM_PREFIX + context
 
-    messages += history
-    messages.append(
-        {"role": "user", "content": message}
-    )
+        messages = [
+            {"role": "system", "content": system_message}
+        ]
 
-    response = openai.chat.completions.create(
-        model=MODEL,
-        messages=messages
-    )
+        messages += history
+        messages.append(
+            {"role": "user", "content": message}
+        )
 
-    output = response.choices[0].message.content
+        response = openai.chat.completions.create(
+            model=MODEL,
+            messages=messages
+        )
 
-    save_log(message, output)
+        output = response.choices[0].message.content
 
-    return output
+        save_log(message, output)
+
+        return output
+
+    except Exception:
+        save_error(message)
+        raise
 
 
 gr.ChatInterface(chat).launch(inbrowser=True)
